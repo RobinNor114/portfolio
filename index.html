@@ -31,23 +31,23 @@
         .carousel {
             position: relative;
             overflow: hidden;
-            border-radius: 0.5rem;
         }
         
         .carousel-inner {
             display: flex;
-            transition: transform 0.5s ease;
+            transition: transform 0.5s ease-in-out;
+            width: 100%;
         }
         
         .carousel-item {
-            min-width: 100%;
+            min-width: 100%; 
             flex-shrink: 0;
         }
         
         .carousel-item img {
             width: 100%;
             height: auto;
-            display: block;
+            object-fit: cover;
         }
         
         .carousel-control {
@@ -379,24 +379,7 @@
                             </p>
                         </div>
                     </div>
-                    
-                    <div>
-                        <h3 class="text-xl font-medium mb-4">Follow Us</h3>
-                        <div class="flex space-x-4">
-                            <a href="#" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-indigo-100 transition">
-                                <i class="fab fa-twitter text-gray-700"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-indigo-100 transition">
-                                <i class="fab fa-github text-gray-700"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-indigo-100 transition">
-                                <i class="fab fa-linkedin-in text-gray-700"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-indigo-100 transition">
-                                <i class="fab fa-instagram text-gray-700"></i>
-                            </a>
-                        </div>
-                    </div>
+                  
                 </div>
             </div>
         </div>
@@ -415,86 +398,80 @@
         </div>
     </footer>
 
-    <script>
-        // Initialize carousels
-        document.addEventListener('DOMContentLoaded', function() {
-            initCarousel('goways-carousel', 'goways-indicators');
-            initCarousel('kesy-carousel', 'kesy-indicators');
-        });
-        
-        function initCarousel(carouselId, indicatorsId) {
-            const carousel = document.getElementById(carouselId);
-            const items = carousel.querySelectorAll('.carousel-item');
-            const indicatorsContainer = document.getElementById(indicatorsId);
-            
-            // Create indicators
-            items.forEach((_, index) => {
-                const indicator = document.createElement('div');
-                indicator.className = 'carousel-indicator';
-                if (index === 0) indicator.classList.add('active');
-                indicator.addEventListener('click', () => {
-                    goToSlide(carouselId, index);
-                });
-                indicatorsContainer.appendChild(indicator);
+   <script>
+    const carouselState = {};
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initCarousel('goways-carousel', 'goways-indicators');
+        initCarousel('kesy-carousel', 'kesy-indicators');
+    });
+
+    function initCarousel(carouselId, indicatorsId) {
+        const carousel = document.getElementById(carouselId);
+        const items = carousel.querySelectorAll('.carousel-item');
+        const indicatorsContainer = document.getElementById(indicatorsId);
+
+        carouselState[carouselId] = {
+            currentIndex: 0,
+            total: items.length
+        };
+
+        // Create indicators
+        indicatorsContainer.innerHTML = ''; // clear any existing
+        items.forEach((_, index) => {
+            const indicator = document.createElement('div');
+            indicator.className = 'carousel-indicator';
+            if (index === 0) indicator.classList.add('active');
+            indicator.addEventListener('click', () => {
+                goToSlide(carouselId, index);
             });
-            
-            // Set initial position
-            carousel.style.transform = 'translateX(0)';
-        }
-        
-        function prevSlide(carouselId) {
-            const carousel = document.getElementById(carouselId);
-            const items = carousel.querySelectorAll('.carousel-item');
-            const currentPosition = parseInt(carousel.style.transform.split('(')[1].split(')')[0]);
-            const itemWidth = carousel.offsetWidth;
-            
-            if (currentPosition < 0) {
-                const newPosition = currentPosition + itemWidth;
-                carousel.style.transform = `translateX(${newPosition}px)`;
-                updateIndicators(carouselId, Math.abs(newPosition) / itemWidth);
-            }
-        }
-        
-        function nextSlide(carouselId) {
-            const carousel = document.getElementById(carouselId);
-            const items = carousel.querySelectorAll('.carousel-item');
-            const currentPosition = parseInt(carousel.style.transform.split('(')[1].split(')')[0]);
-            const itemWidth = carousel.offsetWidth;
-            
-            if (currentPosition > -((items.length - 1) * itemWidth)) {
-                const newPosition = currentPosition - itemWidth;
-                carousel.style.transform = `translateX(${newPosition}px)`;
-                updateIndicators(carouselId, Math.abs(newPosition) / itemWidth);
-            }
-        }
-        
-        function goToSlide(carouselId, slideIndex) {
-            const carousel = document.getElementById(carouselId);
-            const itemWidth = carousel.offsetWidth;
-            const newPosition = -(slideIndex * itemWidth);
-            carousel.style.transform = `translateX(${newPosition}px)`;
-            updateIndicators(carouselId, slideIndex);
-        }
-        
-        function updateIndicators(carouselId, activeIndex) {
-            const indicatorsContainer = document.getElementById(carouselId + '-indicators');
-            const indicators = indicatorsContainer.querySelectorAll('.carousel-indicator');
-            
-            indicators.forEach((indicator, index) => {
-                if (index === activeIndex) {
-                    indicator.classList.add('active');
-                } else {
-                    indicator.classList.remove('active');
-                }
-            });
-        }
-        
-        // Mobile menu toggle
-        const mobileMenuButton = document.querySelector('header button');
-        mobileMenuButton.addEventListener('click', function() {
-            // In a real implementation, you would toggle a mobile menu here
-            alert('Mobile menu would open here when I complete this');
+            indicatorsContainer.appendChild(indicator);
         });
-    </script>
+
+        updateCarouselTransform(carouselId);
+    }
+
+    function prevSlide(carouselId) {
+        if (carouselState[carouselId].currentIndex > 0) {
+            carouselState[carouselId].currentIndex--;
+            updateCarouselTransform(carouselId);
+        }
+    }
+
+    function nextSlide(carouselId) {
+        if (carouselState[carouselId].currentIndex < carouselState[carouselId].total - 1) {
+            carouselState[carouselId].currentIndex++;
+            updateCarouselTransform(carouselId);
+        }
+    }
+
+    function goToSlide(carouselId, slideIndex) {
+        carouselState[carouselId].currentIndex = slideIndex;
+        updateCarouselTransform(carouselId);
+    }
+
+    function updateCarouselTransform(carouselId) {
+        const carousel = document.getElementById(carouselId);
+        const index = carouselState[carouselId].currentIndex;
+        carousel.style.transform = `translateX(-${index * 100}%)`;
+
+        updateIndicators(carouselId, index);
+    }
+
+    function updateIndicators(carouselId, activeIndex) {
+        const indicatorsContainer = document.getElementById(carouselId + '-indicators');
+        const indicators = indicatorsContainer.querySelectorAll('.carousel-indicator');
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === activeIndex);
+        });
+    }
+
+    // Mobile menu toggle
+    const mobileMenuButton = document.querySelector('header button');
+    mobileMenuButton.addEventListener('click', function () {
+        alert('Mobile menu would open here when I complete this');
+    });
+</script>
+
 </body>
 </html>
