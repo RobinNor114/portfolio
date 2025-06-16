@@ -226,20 +226,21 @@
                     <!-- React-Style Carousel -->
                     <div class="carousel" id="goways-carousel">
                         <div class="carousel-inner" id="goways-inner">
+                            <!-- Placeholder images - replace with your actual images -->
                             <div class="carousel-item">
-                                <img src="images/image1.png" alt="GoWays Screenshot 1">
+                                <img src="https://via.placeholder.com/800x400?text=Project+Screenshot+1" alt="GoWays Screenshot 1">
                             </div>
                             <div class="carousel-item">
-                                <img src="images/image2.png" alt="GoWays Screenshot 2">
+                                <img src="https://via.placeholder.com/800x400?text=Project+Screenshot+2" alt="GoWays Screenshot 2">
                             </div>
                             <div class="carousel-item">
-                                <img src="images/image3.png" alt="GoWays Screenshot 3">
+                                <img src="https://via.placeholder.com/800x400?text=Project+Screenshot+3" alt="GoWays Screenshot 3">
                             </div>
                             <div class="carousel-item">
-                                <img src="images/image4.png" alt="GoWays Screenshot 4">
+                                <img src="https://via.placeholder.com/800x400?text=Project+Screenshot+4" alt="GoWays Screenshot 4">
                             </div>
                             <div class="carousel-item">
-                                <img src="images/image5.png" alt="GoWays Screenshot 5">
+                                <img src="https://via.placeholder.com/800x400?text=Project+Screenshot+5" alt="GoWays Screenshot 5">
                             </div>
                         </div>
                         <button class="carousel-control prev">
@@ -288,20 +289,21 @@
                     <!-- React-Style Carousel -->
                     <div class="carousel" id="kesy-carousel">
                         <div class="carousel-inner" id="kesy-inner">
+                            <!-- Placeholder images - replace with your actual images -->
                             <div class="carousel-item">
-                                <img src="images/pic1.png" alt="Kesy Tours Screenshot 1">
+                                <img src="https://via.placeholder.com/800x400?text=Project+Screenshot+1" alt="Kesy Tours Screenshot 1">
                             </div>
                             <div class="carousel-item">
-                                <img src="images/pic2.png" alt="Kesy Tours Screenshot 2">
+                                <img src="https://via.placeholder.com/800x400?text=Project+Screenshot+2" alt="Kesy Tours Screenshot 2">
                             </div>
                             <div class="carousel-item">
-                                <img src="images/pic3.png" alt="Kesy Tours Screenshot 3">
+                                <img src="https://via.placeholder.com/800x400?text=Project+Screenshot+3" alt="Kesy Tours Screenshot 3">
                             </div>
                             <div class="carousel-item">
-                                <img src="images/pic4.png" alt="Kesy Tours Screenshot 4">
+                                <img src="https://via.placeholder.com/800x400?text=Project+Screenshot+4" alt="Kesy Tours Screenshot 4">
                             </div>
                             <div class="carousel-item">
-                                <img src="images/pic5.png" alt="Kesy Tours Screenshot 5">
+                                <img src="https://via.placeholder.com/800x400?text=Project+Screenshot+5" alt="Kesy Tours Screenshot 5">
                             </div>
                         </div>
                         <button class="carousel-control prev">
@@ -400,32 +402,44 @@
 
         function initCarousel(prefix) {
             const carousel = document.getElementById(`${prefix}-carousel`);
+            if (!carousel) return;
+            
             const inner = document.getElementById(`${prefix}-inner`);
             const indicatorsContainer = document.getElementById(`${prefix}-indicators`);
-            const items = inner.querySelectorAll('.carousel-item');
+            const items = inner ? inner.querySelectorAll('.carousel-item') : [];
             const prevBtn = carousel.querySelector('.prev');
             const nextBtn = carousel.querySelector('.next');
+            
+            if (!items.length) return;
             
             let currentIndex = 0;
             let intervalId;
             
             // Create indicators
-            items.forEach((_, index) => {
-                const indicator = document.createElement('div');
-                indicator.className = 'carousel-indicator';
-                if (index === 0) indicator.classList.add('active');
-                indicator.addEventListener('click', () => goToSlide(index));
-                indicatorsContainer.appendChild(indicator);
-            });
+            if (indicatorsContainer) {
+                indicatorsContainer.innerHTML = '';
+                items.forEach((_, index) => {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'carousel-indicator';
+                    if (index === 0) indicator.classList.add('active');
+                    indicator.addEventListener('click', () => goToSlide(index));
+                    indicatorsContainer.appendChild(indicator);
+                });
+            }
             
             // Update carousel position
             function updateCarousel() {
-                inner.style.transform = `translateX(-${currentIndex * 100}%)`;
+                if (inner) {
+                    inner.style.transform = `translateX(-${currentIndex * 100}%)`;
+                }
                 
                 // Update indicators
-                indicatorsContainer.querySelectorAll('.carousel-indicator').forEach((indicator, index) => {
-                    indicator.classList.toggle('active', index === currentIndex);
-                });
+                if (indicatorsContainer) {
+                    const indicators = indicatorsContainer.querySelectorAll('.carousel-indicator');
+                    indicators.forEach((indicator, index) => {
+                        indicator.classList.toggle('active', index === currentIndex);
+                    });
+                }
             }
             
             // Go to specific slide
@@ -461,8 +475,8 @@
             }
             
             // Event listeners
-            prevBtn.addEventListener('click', prevSlide);
-            nextBtn.addEventListener('click', nextSlide);
+            if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+            if (nextBtn) nextBtn.addEventListener('click', nextSlide);
             
             // Pause on hover
             carousel.addEventListener('mouseenter', () => clearInterval(intervalId));
@@ -475,9 +489,11 @@
 
         // Mobile menu toggle
         const mobileMenuButton = document.querySelector('header button');
-        mobileMenuButton.addEventListener('click', function() {
-            alert('Mobile menu would open here when I complete this');
-        });
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', function() {
+                alert('Mobile menu would open here when I complete this');
+            });
+        }
     </script>
 </body>
 </html>
